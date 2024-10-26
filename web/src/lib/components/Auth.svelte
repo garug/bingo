@@ -1,23 +1,35 @@
 <script lang="ts">
   import type { JwtPayload } from "jwt-decode";
-  import { jwtDecode } from "jwt-decode";
 
-  let googleButton: HTMLDivElement;
+  import { jwtDecode } from "jwt-decode";
+  import { setCredential, useCredential } from "$lib/stores/auth.svelte";
+
+  let googleButton = $state() as HTMLDivElement;
 
   const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   type CredentialResponse = google.accounts.id.CredentialResponse;
 
   type TokenInfo = {
-    name: string;
+    given_name: string;
   } & JwtPayload;
 
-  function handleCredentialResponse(response: CredentialResponse) {
-    const token = jwtDecode<TokenInfo>(response.credential);
-
-    console.log(new Date(token.exp));
-    console.log(token.name);
+  function bindGoogleButton() {
+    google.accounts.id.renderButton(googleButton, {
+      type: "standard",
+    });
   }
+
+  function handleCredentialResponse(response: CredentialResponse) {
+    setCredential(response.credential);
+    document.cookie = `credential=${response.credential}; max-age=${60 * 60 * 8}`;
+  }
+
+  const user = $derived.by(() => {
+    const credential = useCredential();
+
+    return credential && jwtDecode<TokenInfo>(credential);
+  });
 
   function onload() {
     google.accounts.id.initialize({
@@ -25,9 +37,7 @@
       callback: handleCredentialResponse,
     });
 
-    google.accounts.id.renderButton(googleButton, {
-      type: "standard",
-    });
+    user || bindGoogleButton();
   }
 </script>
 
@@ -37,12 +47,16 @@
 
 <div id="g_id_onload" data-auto_prompt="false" data-client_id={client_id}></div>
 
-<div
-  class="g_id_signin"
-  data-shape="rectangular"
-  data-theme="outline"
-  data-text="signin_with"
-  data-size="large"
-  data-logo_alignment="left"
-  bind:this={googleButton}
-></div>
+{#if user}
+  <p>Olá, {user.given_name}</p>
+{:else}
+  <div
+    class="g_id_signin"
+    data-shape="rectangular"
+    data-theme="outline"
+    data-text="signin_with"
+    data-size="large"
+    data-logo_alignment="left"
+    bind:this={googleButton}
+  ></div>
+{/if}

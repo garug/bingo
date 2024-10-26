@@ -1,8 +1,11 @@
 <script lang="ts">
   import Header from "./Header.svelte";
   import "../app.css";
+  import { setCredential } from "$lib/stores/auth.svelte";
 
-  let { children } = $props();
+  let { children, data } = $props();
+
+  if (data.credential) setCredential(data.credential);
 </script>
 
 <div class="app">
