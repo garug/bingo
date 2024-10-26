@@ -17,7 +17,7 @@
 
   <footer>
     <p>
-      visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to learn
+      visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to learn {data.a}
       about SvelteKit
     </p>
   </footer>

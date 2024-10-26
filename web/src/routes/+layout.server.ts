@@ -3,5 +3,5 @@ export async function load({ cookies }) {
 
   console.log({ credential });
 
-  return { credential };
+  return { credential, a: "abc" };
 }
