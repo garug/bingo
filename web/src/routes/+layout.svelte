@@ -1,40 +1,15 @@
 <script lang="ts">
   import Header from "./Header.svelte";
   import "../app.css";
-  import { client_id } from "$lib/google";
 
   let { children } = $props();
 </script>
 
-<svelte:head>
-  <script src="https://accounts.google.com/gsi/client" async></script>
-</svelte:head>
-
 <div class="app">
   <Header />
-  <div
-    id="g_id_onload"
-    data-client_id={client_id}
-    data-context="signin"
-    data-ux_mode="popup"
-    data-login_uri="/_auth"
-    data-auto_select="true"
-    data-close_on_tap_outside="false"
-    data-itp_support="true"
-  ></div>
-
-  <div
-    class="g_id_signin"
-    data-type="standard"
-    data-shape="rectangular"
-    data-theme="outline"
-    data-text="signin"
-    data-size="large"
-    data-logo_alignment="left"
-  ></div>
 
   <main>
-	{@render children()}
+    {@render children()}
   </main>
 
   <footer>
