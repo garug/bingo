@@ -2,7 +2,7 @@
   import type { JwtPayload } from "jwt-decode";
 
   import { jwtDecode } from "jwt-decode";
-  import { auth } from "$lib/stores/auth.svelte";
+  import { auth, token } from "$lib/stores/auth.svelte";
 
   let googleButton = $state() as HTMLDivElement;
 
@@ -52,6 +52,11 @@
 
     user || bindGoogleButton();
   }
+
+  function revokeToken() {
+    const t = token() as any;
+    google.accounts.id.revoke(t.email, (done) => console.log(done));
+  }
 </script>
 
 <svelte:head>
@@ -60,6 +65,7 @@
 
 <div id="g_id_onload" data-auto_prompt="false" data-client_id={client_id}></div>
 
+<button onclick={revokeToken}>Sair</button>
 {#if user}
   <p>Olá, {user.given_name}</p>
 {:else}
