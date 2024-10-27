@@ -39,8 +39,6 @@
   const user = $derived.by(() => {
     const credential = auth.credential;
 
-    console.log({ credential, auth: true });
-
     return credential && jwtDecode<TokenInfo>(credential);
   });
 
