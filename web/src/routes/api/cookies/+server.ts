@@ -5,7 +5,9 @@ export async function POST({ cookies, request }: RequestEvent) {
 
   cookies.set(body.name, body.value, {
     path: "/",
+    httpOnly: true,
     maxAge: body.maxAge,
+    sameSite: "strict",
   });
 
   return new Response();
