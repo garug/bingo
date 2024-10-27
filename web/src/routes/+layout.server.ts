@@ -1,7 +1,7 @@
-export async function load({ cookies }) {
+import type { RequestEvent } from "@sveltejs/kit";
+
+export async function load({ cookies }: RequestEvent) {
   const credential = cookies.get("credential");
 
-  console.log({ credential });
-
-  return { credential, cookies: cookies.getAll() };
+  return { credential };
 }

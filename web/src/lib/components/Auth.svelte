@@ -20,9 +20,20 @@
     });
   }
 
+  function storeCredential(credential: string) {
+    return fetch("/api/cookies", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "credential",
+        value: credential,
+        maxAge: 60 * 60 * 8,
+      }),
+    });
+  }
+
   function handleCredentialResponse(response: CredentialResponse) {
     setCredential(response.credential);
-    document.cookie = `credential=${response.credential}; max-age=${60 * 60 * 8}`;
+    storeCredential(response.credential);
   }
 
   const user = $derived.by(() => {
