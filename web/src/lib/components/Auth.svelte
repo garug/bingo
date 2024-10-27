@@ -2,7 +2,7 @@
   import type { JwtPayload } from "jwt-decode";
 
   import { jwtDecode } from "jwt-decode";
-  import { setCredential, useCredential } from "$lib/stores/auth.svelte";
+  import { auth } from "$lib/stores/auth.svelte";
 
   let googleButton = $state() as HTMLDivElement;
 
@@ -32,12 +32,12 @@
   }
 
   function handleCredentialResponse(response: CredentialResponse) {
-    setCredential(response.credential);
+    auth.credential = response.credential;
     storeCredential(response.credential);
   }
 
   const user = $derived.by(() => {
-    const credential = useCredential();
+    const credential = auth.credential;
 
     return credential && jwtDecode<TokenInfo>(credential);
   });

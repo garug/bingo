@@ -1,9 +1,7 @@
-let _credential: string | undefined = $state();
+type Auth = {
+  credential: string | undefined;
+};
 
-export function setCredential(str: string) {
-  _credential = str;
-}
-
-export function useCredential() {
-  return _credential;
-}
+export const auth: Auth = $state({
+  credential: undefined,
+});

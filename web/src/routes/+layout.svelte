@@ -1,11 +1,11 @@
 <script lang="ts">
   import Header from "./Header.svelte";
   import "../app.css";
-  import { setCredential } from "$lib/stores/auth.svelte";
+  import { auth } from "$lib/stores/auth.svelte";
 
   let { children, data } = $props();
 
-  if (data.credential) setCredential(data.credential);
+  if (data.credential) auth.credential = data.credential;
 </script>
 
 <div class="app">
