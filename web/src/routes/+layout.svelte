@@ -2,6 +2,7 @@
   import Auth from "$lib/components/Auth.svelte";
   import { auth } from "$lib/stores/auth.svelte";
   import "../app.css";
+  import { page } from "$app/stores"
 
   let { children, data } = $props();
 
@@ -9,8 +10,10 @@
 </script>
 
 <div class="app">
-  <Auth />
-  
+  {#if $page.url.pathname !== "/game"}
+    <Auth />
+  {/if}
+
   <main>
     {@render children()}
   </main>
