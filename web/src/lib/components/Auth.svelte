@@ -2,7 +2,7 @@
   import type { JwtPayload } from "jwt-decode";
 
   import { jwtDecode } from "jwt-decode";
-  import { auth, token } from "$lib/stores/auth.svelte";
+  import { auth } from "$lib/stores/auth.svelte";
 
   let googleButton = $state() as HTMLDivElement;
 
@@ -31,6 +31,12 @@
     });
   }
 
+  function deleteCredential() {
+    return fetch("/api/cookies/credential", {
+      method: "DELETE",
+    });
+  }
+
   function handleCredentialResponse(response: CredentialResponse) {
     auth.credential = response.credential;
     storeCredential(response.credential);
@@ -52,8 +58,11 @@
   }
 
   function revokeToken() {
-    const t = token() as any;
-    google.accounts.id.revoke(t.email, (done) => console.log(done));
+    auth.credential = undefined;
+
+    // TODO botão não está aparecendo após limpar o token local
+    deleteCredential();
+    // TODO após limpo, o servidor está recebendo o cookie mesmo assim
   }
 </script>
 
