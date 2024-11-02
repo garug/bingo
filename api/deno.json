@@ -3,6 +3,7 @@
     "dev": "deno run --allow-net --allow-read --allow-env --watch main.ts"
   },
   "imports": {
+    "@lib/": "./lib/",
     "@std/assert": "jsr:@std/assert@1",
     "@std/fs": "jsr:@std/fs@^1.0.4"
   }
