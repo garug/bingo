@@ -1,10 +1,13 @@
+import { join } from "@std/path";
+
 Deno.serve(async (req) => {
   const url = new URL(req.url);
 
   let module;
 
   try {
-    module = await import(`./routes${url.pathname}/+server.ts`);
+    const path = join("routes", url.pathname, "+server.ts");
+    module = await import(`./${path}`);
   } catch (_error) {
     return new Response("Not found", {
       status: 404,
