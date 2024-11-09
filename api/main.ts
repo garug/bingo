@@ -1,13 +1,17 @@
-import { join } from "@std/path";
+import { setupRoutes } from "./setup/routes.ts";
+
+const { routes } = await setupRoutes();
 
 Deno.serve(async (req) => {
   const url = new URL(req.url);
 
   let module;
 
+  let route;
+
   try {
-    const path = join("routes", url.pathname, "+server.ts");
-    module = await import(`./${path}`);
+    route = routes.find((e) => e.regExp.test(url.pathname));
+    module = await import(`./${route?.path}`);
   } catch (_error) {
     return new Response("Not found", {
       status: 404,
@@ -15,7 +19,7 @@ Deno.serve(async (req) => {
   }
 
   if (module[req.method]) {
-    return module[req.method](req);
+    return module[req.method](req, route);
   }
 
   return new Response("Method not implemented", {
