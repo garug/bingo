@@ -40,3 +40,8 @@ export function useQueryParameters(req: Request) {
 
   return parameters;
 }
+
+export function useParameters(req: Request, route: Route) {
+  // TODO avoid conflict in keys between two types of parameters
+  return { ...useQueryParameters(req), ...usePathParameters(req, route) };
+}
