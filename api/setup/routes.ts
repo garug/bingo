@@ -1,13 +1,21 @@
-import type { Route, RoutePathParameter } from "@lib/routing.ts";
 import type { WalkEntry } from "@std/fs";
+import type { RoutePathParameter } from "@lib/routing.ts";
+import { Route } from "@lib/routing.ts";
 import { walk } from "@std/fs";
 import { join } from "@std/path";
 
 const serverRegExp = /(?<=.*)\+server\.ts\b/;
 
-function dirEntryToRoute(dirEntry: WalkEntry): Route {
+function buildApplicationRoutes(routes: Route[]) {
+  return {
+    routes,
+    get: (str: string) => routes.find((e) => e.regExp.test(str)),
+  };
+}
+
+function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
   const path = dirEntry.path;
-  const route = path.split("\\").slice(1, -1);
+  const route = path.split("\\").slice(rootLevel, -1);
   const parameters: RoutePathParameter[] = [];
 
   if (route.length === 0) {
@@ -16,7 +24,7 @@ function dirEntryToRoute(dirEntry: WalkEntry): Route {
       regExp: /^\/$/,
       path,
       parameters,
-    } as const;
+    };
   }
 
   const parts = route.map((parameter, idx) => {
@@ -33,20 +41,21 @@ function dirEntryToRoute(dirEntry: WalkEntry): Route {
     regExp,
     path,
     parameters,
-  } as const;
+  };
 }
 
-export async function setupRoutes() {
-  const iterateOverRoutes = walk("./routes", {
+export async function setupRoutes(path = "./routes") {
+  const iterateOverRoutes = walk(path, {
     match: [serverRegExp],
   });
 
   const routes = [];
 
   for await (const dirEntry of iterateOverRoutes) {
-    const route = dirEntryToRoute(dirEntry);
+    const pathLevels = path.split("/").slice(1).length;
+    const route = dirEntryToRoute(dirEntry, pathLevels);
     routes.push(route);
   }
 
-  return { routes };
+  return buildApplicationRoutes(routes);
 }

@@ -1,28 +1,21 @@
+import type { RouteModule } from "@lib/routing.ts";
+import { HttpResponses } from "@lib/statusCode.ts";
 import { setupRoutes } from "./setup/routes.ts";
 
-const { routes } = await setupRoutes();
+const routes = await setupRoutes();
 
 Deno.serve(async (req) => {
   const url = new URL(req.url);
 
-  let module;
+  const route = routes.get(url.pathname);
 
-  let route;
+  let module: RouteModule | undefined;
 
   try {
-    route = routes.find((e) => e.regExp.test(url.pathname));
     module = await import(`./${route?.path}`);
   } catch (_error) {
-    return new Response("Not found", {
-      status: 404,
-    });
+    return HttpResponses.NOT_FOUND;
   }
 
-  if (module[req.method]) {
-    return module[req.method](req, route);
-  }
-
-  return new Response("Method not implemented", {
-    status: 501,
-  });
+  return module?.[req.method]?.(req, route) ?? HttpResponses.NOT_IMPLEMENTED;
 });
