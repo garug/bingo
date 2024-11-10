@@ -7,6 +7,10 @@ export type PathParameters = Record<string, string | undefined>;
 
 export type QueryParameters = Record<string, string | string[] | undefined>;
 
+export type RouteModule = {
+  [method: string]: ((request: Request, route?: Route) => Response) | undefined;
+};
+
 export type Route = Readonly<{
   name: string;
   regExp: RegExp;
