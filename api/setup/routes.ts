@@ -44,15 +44,17 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
   };
 }
 
-export async function setupRoutes(path = "./routes") {
-  const iterateOverRoutes = walk(path, {
+const defaultRoutes = [".", "routes"];
+
+export async function setupRoutes(...path: string[]) {
+  const iterateOverRoutes = walk(join(...(path || defaultRoutes)), {
     match: [serverRegExp],
   });
 
   const routes = [];
 
   for await (const dirEntry of iterateOverRoutes) {
-    const pathLevels = path.split("/").slice(1).length;
+    const pathLevels = path.slice(1).length;
     const route = dirEntryToRoute(dirEntry, pathLevels);
     routes.push(route);
   }
