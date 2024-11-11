@@ -1,7 +1,9 @@
 name: deploy-api
 on:
   push:
-    branches: main
+    branches:
+        - main
+        - api/**
   pull_request:
     branches: main
 
