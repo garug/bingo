@@ -25,7 +25,7 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
       path,
       parameters,
     };
-  } 
+  }
 
   const parts = route.map((parameter, idx) => {
     if (parameter.startsWith("{") && parameter.endsWith("}")) {
@@ -44,12 +44,8 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
   };
 }
 
-const defaultPath = [".", "routes"];
-
-console.log(defaultPath);
-
-export async function setupRoutes(...path: string[]) {
-  const iterateOverRoutes = walk(join(...(path || defaultPath)), {
+export async function setupRoutes(path = [".", "routes"]) {
+  const iterateOverRoutes = walk(join(...path), {
     match: [serverRegExp],
   });
 

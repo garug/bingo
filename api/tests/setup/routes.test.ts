@@ -12,7 +12,7 @@ const setupRoutesTests = describe({
 const src = ["tests", "resources", "routes"];
 
 it(setupRoutesTests, "should allow sub levels", async () => {
-  const { get } = await setupRoutes(".", ...src, "with-sub-level", "1", "2");
+  const { get } = await setupRoutes([".", ...src, "with-sub-level", "1", "2"]);
   const root = {
     name: "/",
     parameters: [],
@@ -23,7 +23,7 @@ it(setupRoutesTests, "should allow sub levels", async () => {
 });
 
 it(setupRoutesTests, "should allow empty", async () => {
-  const { routes } = await setupRoutes(".", ...src, "empty");
+  const { routes } = await setupRoutes([".", ...src, "empty"]);
 
   assertEquals(routes.length, 0);
 });
