@@ -23,7 +23,7 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
       name: "/",
       regExp: /^\/$/,
       path,
-      parameters,
+      parameters, 
     };
   }
 
