@@ -1,26 +1,29 @@
 import { assertEquals } from "@std/assert";
+import { describe, it } from "jsr:@std/testing/bdd";
 import { setupRoutes } from "../../setup/routes.ts";
 
-Deno.test(
-  {
-    name: "setupRoutes - should allow sub levels",
-    permissions: { read: true, run: true },
+const setupRoutesTests = describe({
+  name: "setupRoute",
+  permissions: {
+    read: true,
   },
-  () => {
-    // const { get } = await setupRoutes(
-    //   "./tests/resources/routes/with-sub-level/1/2"
-    // );
-    // const root = {
-    //   name: "/",
-    //   parameters: [],
-    //   path: "tests\\resources\\routes\\with-sub-level\\1\\2\\+server.ts",
-    //   regExp: /^\/$/,
-    // };
-    // assertEquals(get("/"), root);
-  }
-);
+});
 
-Deno.test("empty", () => {
-  const x = 1 + 2;
-  assertEquals(x, 3);
+const src = "tests/resources/routes";
+
+it(setupRoutesTests, "should allow sub levels", async () => {
+  const { get } = await setupRoutes();
+  const root = {
+    name: "/",
+    parameters: [],
+    path: "tests\\resources\\routes\\with-sub-level\\1\\2\\+server.ts",
+    regExp: /^\/$/,
+  };
+  assertEquals(get("/"), root);
+});
+
+it(setupRoutesTests, "should allow empty", async () => {
+  const { routes } = await setupRoutes(`./${src}/empty`);
+
+  assertEquals(routes.length, 0);
 });
