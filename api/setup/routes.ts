@@ -23,7 +23,7 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
       name: "/",
       regExp: /^\/$/,
       path,
-      parameters, 
+      parameters,
     };
   }
 
@@ -47,7 +47,9 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
 const defaultRoutes = Deno.env.get("PATH_ROUTES")?.split(",") || [
   ".",
   "routes",
-]; 
+];
+
+console.log(defaultRoutes);
 
 export async function setupRoutes(...path: string[]) {
   const iterateOverRoutes = walk(join(...(path || defaultRoutes)), {
