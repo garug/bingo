@@ -3,7 +3,6 @@ import type { RoutePathParameter } from "@lib/routing.ts";
 import { Route } from "@lib/routing.ts";
 import { walk } from "@std/fs";
 import { join, SEPARATOR } from "@std/path";
-import { env } from "process";
 
 const serverRegExp = /(?<=.*)\+server\.ts\b/;
 
@@ -45,7 +44,10 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
   };
 }
 
-const defaultRoutes = [".", "routes"];
+const defaultRoutes = Deno.env.get("PATH_ROUTES")?.split(",") || [
+  ".",
+  "routes",
+]; 
 
 export async function setupRoutes(...path: string[]) {
   const iterateOverRoutes = walk(join(...(path || defaultRoutes)), {
