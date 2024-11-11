@@ -25,7 +25,7 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
       path,
       parameters,
     };
-  }
+  } 
 
   const parts = route.map((parameter, idx) => {
     if (parameter.startsWith("{") && parameter.endsWith("}")) {
