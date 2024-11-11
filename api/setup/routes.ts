@@ -2,7 +2,7 @@ import type { WalkEntry } from "@std/fs";
 import type { RoutePathParameter } from "@lib/routing.ts";
 import { Route } from "@lib/routing.ts";
 import { walk } from "@std/fs";
-import { join } from "@std/path";
+import { join, SEPARATOR } from "@std/path";
 
 const serverRegExp = /(?<=.*)\+server\.ts\b/;
 
@@ -15,7 +15,7 @@ function buildApplicationRoutes(routes: Route[]) {
 
 function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
   const path = dirEntry.path;
-  const route = path.split("\\").slice(rootLevel, -1);
+  const route = path.split(SEPARATOR).slice(rootLevel, -1);
   const parameters: RoutePathParameter[] = [];
 
   if (route.length === 0) {
