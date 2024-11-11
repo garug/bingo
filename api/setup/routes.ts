@@ -45,10 +45,7 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
   };
 }
 
-const defaultRoutes = Deno.env.get("PATH_ROUTES")?.split(",") || [
-  ".",
-  "routes",
-]; 
+const defaultRoutes = [".", "routes"];
 
 export async function setupRoutes(...path: string[]) {
   const iterateOverRoutes = walk(join(...(path || defaultRoutes)), {
