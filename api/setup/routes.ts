@@ -44,7 +44,7 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
   };
 }
 
-const defaultPath = Deno.env.get("PATH_ROUTES")?.split(",") || [".", "routes"];
+const defaultPath = [".", "routes"];
 
 console.log(defaultPath);
 
