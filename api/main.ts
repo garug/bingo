@@ -12,7 +12,6 @@ Deno.serve(async (req) => {
   let module: RouteModule | undefined;
 
   try {
-    console.log({ url, route });
     module = await import(`./${route?.path}`);
   } catch (_error) {
     return HttpResponses.NOT_FOUND;

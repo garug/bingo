@@ -54,7 +54,6 @@ export async function setupRoutes(path = [".", "routes"]) {
   for await (const dirEntry of iterateOverRoutes) {
     const pathLevels = path.slice(1).length;
     const route = dirEntryToRoute(dirEntry, pathLevels);
-    console.log({ dirEntry, route });
     routes.push(route);
   }
 
