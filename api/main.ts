@@ -1,4 +1,4 @@
-import { HttpResponses, statusCode } from "@lib/statusCode.ts";
+import { HttpResponses } from "@lib/statusCode.ts";
 import { setupRoutes } from "./setup/routes.ts";
 import { importModule } from "@lib/importModule.ts";
 
