@@ -1,6 +1,6 @@
 import { HttpResponses } from "@lib/statusCode.ts";
 import { setupRoutes } from "./setup/routes.ts";
-import { importModule } from "@lib/importModule.ts";
+import { RouteModule } from "@lib/routing.ts";
 
 const routes = await setupRoutes();
 
@@ -11,9 +11,14 @@ Deno.serve(async (req) => {
 
   if (!route?.path) return HttpResponses.NOT_FOUND();
 
-  const module = await importModule(route.path);
+  let module: RouteModule | undefined;
 
-  if (typeof module === "string") return HttpResponses.fromString(module);
+  try {
+    module = await import(`./${route.path}`);
+  } catch (e) {
+    console.error("Unexpected error during module import:", e);
+    return HttpResponses.INTERNAL();
+  }
 
   return module?.[req.method]?.(req, route) ?? HttpResponses.NOT_IMPLEMENTED();
 });
