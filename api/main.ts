@@ -13,12 +13,17 @@ Deno.serve(async (req) => {
 
   try {
     console.log("c1");
-    module = await import(`./${route?.path}`);
+    module = await import(`./${undefined}`);
     console.log("c2");
-  } catch (_error) {
-    console.log(_error);
+  } catch (error) {
+    console.log(error);
     console.log("c3");
-    return HttpResponses.NOT_FOUND;
+
+    if (error instanceof Deno.errors.NotFound) {
+      return HttpResponses.NOT_FOUND;
+    }
+
+    return HttpResponses.INTERNAL;
   }
 
   return module?.[req.method]?.(req, route) ?? HttpResponses.NOT_IMPLEMENTED;
