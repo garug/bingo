@@ -6,7 +6,10 @@ export async function importModule(path: string): ImportModuleResponse {
   try {
     return await import(`../${path}`);
   } catch (error) {
-    if (isModuleNotFoundError(error)) return "not_found";
+    if (isModuleNotFoundError(error)) {
+      console.log(path);
+      return "not_found";
+    }
 
     console.error("Unexpected error during module import:", error);
     return "internal";
