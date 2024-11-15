@@ -16,10 +16,13 @@ Deno.serve(async (req) => {
     module = await import(`./${undefined}`);
     console.log("c2");
   } catch (error) {
-    console.log(error);
     console.log("c3");
 
-    if (error instanceof Deno.errors.NotFound) {
+    if (
+      error instanceof Error &&
+      "code" in error &&
+      error.code === "ERR_MODULE_NOT_FOUND"
+    ) {
       return HttpResponses.NOT_FOUND;
     }
 
