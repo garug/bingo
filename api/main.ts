@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
 
   try {
     console.log("c1");
-    module = await import(`./${undefined}`);
+    module = await import(`./${route?.path}`);
     console.log("c2");
   } catch (error) {
     if (
