@@ -8,15 +8,18 @@ export function statusCode(str: string): number {
 }
 
 export class HttpResponses {
-  static INTERNAL = new Response("Internal server error", {
-    status: 500,
-  });
+  static INTERNAL = () =>
+    new Response("Internal server error", {
+      status: 500,
+    });
 
-  static NOT_FOUND = new Response("Not found", {
-    status: 404,
-  });
+  static NOT_FOUND = () =>
+    new Response("Not found", {
+      status: 404,
+    });
 
-  static NOT_IMPLEMENTED = new Response("Method not implemented", {
-    status: 501,
-  });
+  static NOT_IMPLEMENTED = () =>
+    new Response("Method not implemented", {
+      status: 501,
+    });
 }
