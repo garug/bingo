@@ -26,6 +26,7 @@ jobs:
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "garug-bingo"
-          entrypoint: "main.ts"
-          root: "./api"
+          project: garug-bingo
+          entrypoint: main.ts
+          root: ./api
+          exclude: node_modules
