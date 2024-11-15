@@ -1,8 +1,7 @@
 {
   "lock": false,
   "tasks": {
-    "dev": "deno run --allow-net --allow-read --allow-env --watch main.ts",
-    "deploy": "deployctl deploy --env=PATH_ROUTES=.,routes"
+    "dev": "deno run --allow-net --allow-read --allow-env --watch main.ts"
   },
   "imports": {
     "@lib/": "./lib/",
