@@ -1,24 +1,24 @@
-import { join } from "@std/path";
+import { HttpResponses } from "@lib/statusCode.ts";
+import { setupRoutes } from "./setup/routes.ts";
+import { RouteModule } from "@lib/routing.ts";
+
+const routes = await setupRoutes();
 
 Deno.serve(async (req) => {
   const url = new URL(req.url);
 
-  let module;
+  const route = routes.get(url.pathname);
+
+  if (!route?.path) return HttpResponses.NOT_FOUND();
+
+  let module: RouteModule | undefined;
 
   try {
-    const path = join("routes", url.pathname, "+server.ts");
-    module = await import(`./${path}`);
-  } catch (_error) {
-    return new Response("Not found", {
-      status: 404,
-    });
+    module = await import(`./${route.path}`);
+  } catch (e) {
+    console.error("Unexpected error during module import:", e);
+    return HttpResponses.INTERNAL();
   }
 
-  if (module[req.method]) {
-    return module[req.method](req);
-  }
-
-  return new Response("Method not implemented", {
-    status: 501,
-  });
+  return module?.[req.method]?.(req, route) ?? HttpResponses.NOT_IMPLEMENTED();
 });
