@@ -1,7 +1,7 @@
 {
   "lock": false,
   "tasks": {
-    "dev": "deno run --allow-net --allow-read --allow-env --allow-sys --watch main.ts"
+    "dev": "deno run --allow-net --allow-read --allow-env --allow-sys --watch --env-file main.ts"
   },
   "imports": {
     "@lib/": "./lib/",
