@@ -1,22 +1,40 @@
-import { DynamoDBClient } from "npm:@aws-sdk/client-dynamodb";
-import { PutCommand } from "npm:@aws-sdk/lib-dynamodb";
+import {
+  DynamoDBClient,
+  PutItemCommand,
+} from "https://esm.sh/@aws-sdk/client-dynamodb@3.696.0?dts";
 
 function useClient() {
-  return new DynamoDBClient({ region: "us-east-2" });
+  return new DynamoDBClient({
+    region: "us-east-2",
+    credentials: {
+      accessKeyId: Deno.env.get("AWS_ACCESS_KEY_ID") || "",
+      secretAccessKey: Deno.env.get("AWS_SECRET_ACCESS_KEY") || "",
+    },
+  });
 }
 
 export async function newGame(password: string) {
-  const command = new PutCommand({
-    TableName: Deno.env.get("AWS_TABLE_NAME"),
+  const TableName = Deno.env.get("AWS_TABLE_NAME");
+  const id = crypto.randomUUID();
+
+  const command = new PutItemCommand({
+    TableName,
     Item: {
-      id: `game#${crypto.randomUUID()}`,
-      created_at: Date.now().toString(),
-      password,
+      id: {
+        S: `game#${id}`,
+      },
+      created_at: {
+        N: Date.now().toString(),
+      },
+      password: {
+        S: password,
+      },
     },
   });
 
   const client = await useClient();
 
-  client.send(command);
-  // TODO finish new game function
+  await client.send(command);
+
+  return { id };
 }

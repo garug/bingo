@@ -14,9 +14,5 @@ export async function POST(req: Request) {
 
   const game = await createGame({ password });
 
-  console.log(game)
-
-  return new Response("Sucess", {
-    status: 200,
-  });
+  return Response.json(game, { status: 201 });
 }
