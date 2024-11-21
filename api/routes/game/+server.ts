@@ -9,8 +9,9 @@ export async function POST(req: Request) {
 
   const { password } = await req.json();
 
-  if (!password)
+  if (!password) {
     return HttpResponses.NOT_ACCEPTABLE("password must be provided");
+  }
 
   const game = await createGame({ password });
 
