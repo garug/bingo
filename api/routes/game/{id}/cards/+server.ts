@@ -3,6 +3,8 @@ import { fetchGame } from "@lib/game.ts";
 import { UUID } from "@lib/uuid.ts";
 import { HttpResponses } from "@lib/statusCode.ts";
 import { fetchCard } from "@lib/cards.ts";
+import { bindCardGame } from "@lib/game/bindGameCard.ts";
+import { useToken } from "@lib/auth.ts";
 
 export async function POST(req: Request, route: Route) {
   const { id } = usePathParameters(req, route);
@@ -10,25 +12,15 @@ export async function POST(req: Request, route: Route) {
 
   if (!cardId) return HttpResponses.NOT_ACCEPTABLE("cardId must be provided");
 
-  // TODO parei aqui
-  //   const bind = await bindCardOnGame(id, cardId);
+  let bind;
 
-  const Rgame = fetchGame(id as UUID);
+  const user = await useToken(req);
 
-  const Rcard = fetchCard(cardId as UUID);
-
-  const response = await Promise.all([Rgame, Rcard]);
-
-  if (response.some((e) => e === undefined)) {
-    const elements = [];
-    if (!response[0]) elements.push("game");
-
-    if (!response[1]) elements.push("card");
-
-    const cause = `${elements.join(", ")} not found`;
-
-    return HttpResponses.NOT_FOUND({
-      cause,
+  try {
+    bind = await bindCardGame("", id as UUID, cardId as UUID);
+  } catch (e) {
+    return Response.json(e, {
+      status: 400,
     });
   }
 
