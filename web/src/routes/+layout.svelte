@@ -3,6 +3,7 @@
   import { auth } from "$lib/stores/auth.svelte";
   import "../app.css";
   import { page } from "$app/stores"
+  import Header from "$lib/components/Header.svelte";
 
   let { children, data } = $props();
 
@@ -11,7 +12,8 @@
 
 <div class="app">
   {#if $page.url.pathname !== "/game"}
-    <Auth />
+    <!-- <Auth /> -->
+     <Header />
   {/if}
 
   <main>
