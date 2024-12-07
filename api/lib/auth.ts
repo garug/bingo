@@ -20,3 +20,15 @@ export async function authenticate(req: Request): Promise<string | undefined> {
     return "Forbbiden";
   }
 }
+
+export async function useToken(req: Request) {
+  const error = await authenticate(req);
+
+  if (error) throw Error(error);
+
+  const token = req.headers.get("authorization")?.replace("Bearer ", "");
+
+  console.log(token);
+
+  return token;
+}

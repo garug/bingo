@@ -20,7 +20,7 @@ export class HttpResponses {
     new Response("Internal server error", {
       status: 500,
     });
-  
+
   static NOT_ACCEPTABLE = (cause: string) =>
     Response.json(
       { cause },
@@ -29,8 +29,8 @@ export class HttpResponses {
       }
     );
 
-  static NOT_FOUND = () =>
-    new Response("Not found", {
+  static NOT_FOUND = (data = {}) =>
+    Response.json(data, {
       status: 404,
     });
 
