@@ -1,5 +1,4 @@
 import { Route, usePathParameters } from "@lib/routing.ts";
-import { fetchGame } from "@lib/game.ts";
 import { UUID } from "@lib/uuid.ts";
 import { HttpResponses } from "@lib/statusCode.ts";
 import { fetchCard } from "@lib/cards.ts";

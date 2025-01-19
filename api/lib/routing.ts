@@ -1,3 +1,5 @@
+import { ResultStatus } from "@lib/result.ts";
+
 export type RoutePathParameter = Readonly<{
   idx: number;
   key: string;
@@ -8,7 +10,9 @@ export type PathParameters = Record<string, string | undefined>;
 export type QueryParameters = Record<string, string | string[] | undefined>;
 
 export type RouteModule = {
-  [method: string]: ((request: Request, route?: Route) => Response) | undefined;
+  [method: string]:
+    | (<T, E>(request: Request, route?: Route) => Promise<Response | ResultStatus<T, E>>)
+    | undefined;
 };
 
 export type Route = Readonly<{

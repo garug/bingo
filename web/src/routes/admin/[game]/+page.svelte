@@ -1,6 +1,9 @@
 <script lang="ts">
-  const numbers = Array.from({ length: 90 }).map((e, i) => i + 1);
-  const numbersSorted = [24, 8, 74];
+  import { fetchApi } from "$lib/api";
+  import AllNumbers from "$lib/components/AllNumbers.svelte";
+  import { game } from "$lib/stores/game.svelte";
+
+  const numbersSorted = $state([] as number[]);
   const card = [
     {
       id: 1,
@@ -15,10 +18,18 @@
       name: "João",
     },
   ];
+
+  const { data } = $props();
+
+  async function sortNumber() {
+    await fetchApi(`/game/${data.id}/numbers`, {
+      method: "POST",
+    });
+  }
 </script>
 
 <!-- Fichas Cadastradas -->
-<div class="mt-8 flex flex-col justify-center items-center space-y-4">
+<!-- <div class="mt-8 flex flex-col justify-center items-center space-y-4">
   <h1 class="text-3xl font-bold text-pink">Fichas Cadastradas</h1>
   <div class="flex-row space-y-4 w-[500px] p-16">
     {#each card as c}
@@ -28,28 +39,20 @@
       </div>
     {/each}
   </div>
-</div>
+</div> -->
 
 <!-- Sorteados  -->
-<div class="justify-center flex flex-wrap gap-3 p-4">
-  {#each numbers as number}
-    <div
-      class={`w-[60px] h-[60px] flex justify-center items-center bg-hotpinkligth rounded-xl text-pink font-semibold
-        ${numbersSorted.includes(number) && "bg-pink text-white"}`}
-    >
-      {number}
-    </div>
-  {/each}
-</div>
+<AllNumbers {numbersSorted} />
 
 <!-- Botões -->
 <div class="flex justify-center gap-4 m-8">
-  <button
+  <!-- <button
     class=" h-[-20px] cursor-pointer w-[200px] bg-pink text-white rounded-full
     font-semibold p-4 hover:text-neongreen">Ler Ficha</button
-  >
+  > -->
   <button
-    class="cursor-pointer w-[200px] bg-neongreen text-black rounded-full
-    font-semibold p-4 hover:text-pink">Sortear Número</button
+    onclick={sortNumber}
+    class="cursor-pointer w-[200px] bg-green-500 text-gray-900 rounded-full
+    font-semibold p-4 hover:text-pink-500">Sortear Número</button
   >
 </div>

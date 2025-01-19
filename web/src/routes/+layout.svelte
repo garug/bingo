@@ -1,22 +1,15 @@
 <script lang="ts">
-  import Auth from "$lib/components/Auth.svelte";
-  import { auth } from "$lib/stores/auth.svelte";
+  import { credential } from "$lib/stores/auth.svelte";
   import "../app.css";
-  import { page } from "$app/stores"
-  import Header from "$lib/components/Header.svelte";
 
   let { children, data } = $props();
 
-  if (data.credential) auth.credential = data.credential;
+  if (data.credential) credential.set(data.credential);
 </script>
 
-<div class="app">
-  {#if $page.url.pathname !== "/game"}
-    <!-- <Auth /> -->
+<main class="app">
+  <!-- {#if $page.url.pathname !== "/game"}
      <Header />
-  {/if}
-
-  <main>
-    {@render children()}
-  </main>
-</div>
+  {/if} -->
+  {@render children()}
+</main>

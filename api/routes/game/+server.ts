@@ -3,17 +3,24 @@ import { HttpResponses, statusCode } from "@lib/statusCode.ts";
 import { createGame } from "@lib/game.ts";
 
 export async function POST(req: Request) {
-  const err = await authenticate(req);
+  // const err = await authenticate(req);
 
-  if (err) return new Response(err, { status: statusCode(err) });
+  // if (err) return new Response(err, { status: statusCode(err) });
 
-  const { password } = await req.json();
+  let password;
+
+  try {
+    const body = await req.json();
+    password = body.password;
+  } catch (e) {
+    console.log(e);
+  }
 
   if (!password) {
     return HttpResponses.NOT_ACCEPTABLE("password must be provided");
   }
 
-  const game = await createGame({ password });
+  const { id } = await createGame({ password });
 
-  return Response.json(game, { status: 201 });
+  return Response.json({ id }, { status: 201 });
 }

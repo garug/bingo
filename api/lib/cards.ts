@@ -1,5 +1,5 @@
 import { generateCode } from "@lib/code.ts";
-import { insert, fetch } from "@services/dynamodb.ts";
+import { insert, query } from "@services/dynamodb.ts";
 import { UUID } from "@lib/uuid.ts";
 
 const min = 1;
@@ -48,7 +48,7 @@ export async function generateCards(amount = 1) {
 }
 
 export async function fetchCard(id: UUID) {
-  const card = await fetch(`card#${id}`);
+  const card = await query(`card#${id}`);
 
   console.log(card);
 

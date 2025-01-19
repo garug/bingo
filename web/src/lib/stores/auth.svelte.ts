@@ -1,11 +1,22 @@
+import type { JwtPayload } from "jwt-decode";
 import { jwtDecode } from "jwt-decode";
+import { writable, derived, type Writable } from "svelte/store";
 
-type Auth = {
-  credential: string | undefined;
-};
+type Auth = string | undefined;
 
-export const auth: Auth = $state({
-  credential: undefined,
-});
+type TokenInfo = {
+  given_name: string;
+} & JwtPayload;
 
-export const token = () => auth.credential && jwtDecode(auth.credential);
+export const credential = writable<Auth>(undefined);
+
+export const user = derived<Writable<Auth>, undefined | TokenInfo>(
+  credential,
+  ($a) => {
+    if ($a) {
+      return jwtDecode($a);
+    }
+
+    return undefined;
+  }
+);
