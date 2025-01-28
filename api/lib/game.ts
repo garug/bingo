@@ -32,12 +32,17 @@ export async function createGame(options: GameOptions) {
   return { id: game.pk };
 }
 
-export async function fetchGame(id: UUID) {
+export async function fetchGame(id: UUID, usePassword = false) {
   const game = await query(id);
 
   if (!game) return Err("not_found");
 
-  return Ok(game as GameInstance);
+  if (!usePassword)
+      delete game.password;
+
+  const gameInstance: GameInstance = {id, ...game.value};
+
+  return Ok(gameInstance);
 }
 
 export async function getNumbers(id: UUID) {
@@ -45,5 +50,16 @@ export async function getNumbers(id: UUID) {
 
   if (numbers.type === "error") return numbers;
 
-  return Ok(numbers.value.map((e) => Number(e.value)));
+  return Ok(numbers.value?.map((e) => Number(e.value)));
+}
+
+export async function insertGameNumber(id: UUID, number: number) {
+  await insert({
+    pk: id,
+    sk: `#number#${number}`,
+    value: number,
+    created_at: Date.now(),
+  });
+
+  return Ok();
 }

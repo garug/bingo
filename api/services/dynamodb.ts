@@ -16,6 +16,14 @@ const defaultClient = new DynamoDBClient({
   },
 });
 
+// deno-lint-ignore no-explicit-any
+function normalize(entry: any) {
+  delete entry.sk;
+  delete entry.pk;
+
+  return unmarshall(entry);
+}
+
 export function insert(
   data: unknown,
   TableName = defaultTable,
@@ -56,7 +64,7 @@ export async function query(
     // Here its a 404 response, the undefined its not clear on this function
     return undefined;
 
-  return unmarshall(item);
+  return normalize(item);
 }
 
 export async function queryBegins(
@@ -77,7 +85,7 @@ export async function queryBegins(
   try {
     const { Items } = await client.send(command);
 
-    return Ok((Items || []).map((item) => unmarshall(item)));
+    return Ok((Items || []).map((item) => normalize(item)));
   } catch (e) {
     return Err(e);
   }

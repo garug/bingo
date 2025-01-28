@@ -1,4 +1,4 @@
-export type ResultOk<T> = { type: "ok"; value: T };
+export type ResultOk<T> = { type: "ok"; value?: T };
 
 export type ResultError<T> = { type: "error"; error: T };
 
@@ -21,7 +21,7 @@ export function isResult<T, S, E>(
   return isOk || isError;
 }
 
-export function Ok<T>(value: T): Result<T, never> {
+export function Ok<T>(value?: T): Result<T, never> {
   if (isResult(value)) throw new Error("Result value cannot be a Result type");
 
   return { type: "ok", value };
@@ -34,3 +34,22 @@ export function Err<E>(error: E): Result<never, E> {
 }
 
 export type ResultStatus<T, E> = Result<T, E> & { status?: number };
+
+export function checkResults(results: Result<unknown, unknown>[]) {
+  const groupedByType = results.reduce(
+    (acc, curr) => {
+      if (curr.type === "ok") {
+        acc.ok.push(curr);
+      } else {
+        acc.errors.push(curr);
+      }
+      return acc;
+    },
+    { ok: [] as ResultOk<unknown>[], errors: [] as ResultError<unknown>[] }
+  );
+
+  return {
+    Ok: () => groupedByType.errors.length === 0,
+    errors: () => groupedByType.errors,
+  };
+}

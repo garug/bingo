@@ -1,9 +1,15 @@
 <script lang="ts">
   import { fetchApi } from "$lib/api";
   import AllNumbers from "$lib/components/AllNumbers.svelte";
+  import Button from "$lib/components/Button.svelte";
   import { game } from "$lib/stores/game.svelte";
 
-  const numbersSorted = $state([] as number[]);
+  const { data } = $props();
+
+  let numbersSorted = $state(data.game.numbers);
+
+  let onSorting = $state(false);
+
   const card = [
     {
       id: 1,
@@ -19,12 +25,18 @@
     },
   ];
 
-  const { data } = $props();
-
   async function sortNumber() {
-    await fetchApi(`/game/${data.id}/numbers`, {
+    onSorting = true;
+
+    const res = await fetchApi(`/game/${data.id}/numbers`, {
       method: "POST",
     });
+
+    const number = await res.json();
+
+    numbersSorted = [...numbersSorted, number];
+
+    onSorting = false;
   }
 </script>
 
@@ -50,9 +62,11 @@
     class=" h-[-20px] cursor-pointer w-[200px] bg-pink text-white rounded-full
     font-semibold p-4 hover:text-neongreen">Ler Ficha</button
   > -->
-  <button
-    onclick={sortNumber}
-    class="cursor-pointer w-[200px] bg-green-500 text-gray-900 rounded-full
-    font-semibold p-4 hover:text-pink-500">Sortear Número</button
-  >
+  <Button onclick={sortNumber} variant="green" disabled={onSorting}>
+    {#if onSorting}
+      Sorteando...
+    {:else}
+      Sortear Número
+    {/if}
+  </Button>
 </div>

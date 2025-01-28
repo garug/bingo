@@ -1,6 +1,6 @@
 import { Route, usePathParameters } from "@lib/routing.ts";
-import { gameNumbers, getNumbers } from "@lib/game.ts";
-import { Err } from "@lib/result.ts";
+import { gameNumbers, getNumbers, insertGameNumber } from "@lib/game.ts";
+import { Err, Ok } from "@lib/result.ts";
 import { isValidUUID, UUID } from "@lib/uuid.ts";
 
 export async function POST(req: Request, route: Route) {
@@ -14,15 +14,22 @@ export async function POST(req: Request, route: Route) {
     return Err("id must be a valid UUID");
   }
 
-  const alradySorted = await getNumbers(id as UUID);
+  const gameId = id as UUID;
+
+  const alradySorted = await getNumbers(gameId);
 
   if (alradySorted.type === "error") {
     return alradySorted;
   }
 
-  const possibilities = gameNumbers.filter((e) => !alradySorted.value.includes(e));
+  const possibilities = gameNumbers.filter(
+    (e) => !alradySorted.value?.includes(e)
+  );
 
-  // TODO parei aqui
+  const idx = Math.floor(Math.random() * possibilities.length);
+  const sortedNumber = possibilities[idx];
 
-  return getNumbers(id as UUID);
+  await insertGameNumber(gameId, sortedNumber);
+
+  return Ok(sortedNumber);
 }
