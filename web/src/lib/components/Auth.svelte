@@ -14,7 +14,7 @@
   }
 
   function storeCredential(credential: string) {
-    return fetch("/api/cookies", {
+    return fetch("/cookies", {
       method: "POST",
       body: JSON.stringify({
         name: "credential",
@@ -25,13 +25,12 @@
   }
 
   function deleteCredential() {
-    return fetch("/api/cookies/credential", {
+    return fetch("/cookies/credential", {
       method: "DELETE",
     });
   }
 
   function handleCredentialResponse(response: CredentialResponse) {
-    console.log("ei");
     credential.set(response.credential);
     storeCredential(response.credential);
   }

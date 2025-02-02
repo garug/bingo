@@ -1,12 +1,8 @@
 import { Route, usePathParameters } from "@lib/routing.ts";
-import {
-  fetchGame,
-  gameNumbers,
-  getNumbers,
-  insertGameNumber,
-} from "@lib/game.ts";
+import { fetchGame, getNumbers } from "@lib/game.ts";
 import { Err, Ok, checkResults } from "@lib/result.ts";
 import { isValidUUID, UUID } from "@lib/uuid.ts";
+import { logger } from "@lib/logger.ts";
 
 export async function GET(req: Request, route: Route) {
   const { id } = usePathParameters(req, route);
@@ -32,6 +28,8 @@ export async function GET(req: Request, route: Route) {
   if (allResults.Ok()) {
     // @ts-ignore: numbers and game are guaranteed to be ResultOk
     const returned = { numbers: numbers.value, game: game.value };
+
+    logger.verbose("Game fetched: ", { id });
 
     return Ok(returned);
   } else {

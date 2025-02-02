@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { fetchApi } from "$lib/api";
   import AllNumbers from "$lib/components/AllNumbers.svelte";
   import Button from "$lib/components/Button.svelte";
   import { game } from "$lib/stores/game.svelte";
@@ -12,7 +11,6 @@
 
   const card = [
     {
-      id: 1,
       name: "Sara",
     },
     {
@@ -28,7 +26,7 @@
   async function sortNumber() {
     onSorting = true;
 
-    const res = await fetchApi(`/game/${data.id}/numbers`, {
+    const res = await fetch(`/api/game/${data.id}/numbers`, {
       method: "POST",
     });
 

@@ -5,6 +5,7 @@ import {
 } from "https://esm.sh/@aws-sdk/client-dynamodb@3.696.0?dts";
 import { marshall, unmarshall } from "npm:@aws-sdk/util-dynamodb@3.731.1";
 import { Err, Ok } from "@lib/result.ts";
+import { logger } from "@lib/logger.ts";
 
 const defaultTable = Deno.env.get("AWS_TABLE_NAME");
 
@@ -56,7 +57,7 @@ export async function query(
     item = Items?.[0];
   } catch (e) {
     // TODO handle error, its not a 404 response
-    console.warn("Error while fetching: ", { id, error: e });
+    logger.warn("Error while fetching: ", { id, error: e });
     return undefined;
   }
 

@@ -50,7 +50,5 @@ export async function generateCards(amount = 1) {
 export async function fetchCard(id: UUID) {
   const card = await query(`card#${id}`);
 
-  console.log(card);
-
   return card;
 }
