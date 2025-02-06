@@ -13,8 +13,6 @@ function verify(idToken: string) {
 export async function authenticate(req: Request) {
   const token = req.headers.get("authorization")?.replace("Bearer ", "");
 
-  console.log(req)
-
   if (!token) return Err("Unauthorized");
 
   try {

@@ -1,4 +1,5 @@
 import {
+  BatchWriteItemCommand,
   DynamoDBClient,
   QueryCommand,
   PutItemCommand,
@@ -7,7 +8,11 @@ import { marshall, unmarshall } from "npm:@aws-sdk/util-dynamodb@3.731.1";
 import { Err, Ok } from "@lib/result.ts";
 import { logger } from "@lib/logger.ts";
 
-const defaultTable = Deno.env.get("AWS_TABLE_NAME");
+const defaultTable = Deno.env.get("AWS_TABLE_NAME") as string;
+
+if (!defaultTable) {
+  throw new Error("Missing AWS_TABLE_NAME env variable");
+}
 
 const defaultClient = new DynamoDBClient({
   region: "us-east-2",
@@ -38,6 +43,63 @@ export function insert(
   return client.send(command);
 }
 
+export function insertBatch(
+  data: unknown[],
+  TableName = defaultTable,
+  client = defaultClient
+) {
+  const command = new BatchWriteItemCommand({
+    RequestItems: {
+      [TableName]: data.map((item) => ({
+        PutRequest: {
+          Item: marshall(item),
+        },
+      })),
+    },
+  });
+
+  return client.send(command);
+}
+
+// TODO: remove any
+// @ts-ignore: any for internal function
+async function handleResultQuery(
+  command: QueryCommand,
+  client = defaultClient
+) {
+  let item;
+
+  try {
+    const { Items } = await client.send(command);
+    item = Items?.[0];
+  } catch (e) {
+    logger.warn("Error while fetching: ", { command, error: e });
+    return Err(e);
+  }
+
+  if (!item) return Err("not found");
+
+  return Ok(normalize(item));
+}
+
+export async function querySk(
+  pk: string,
+  sk: string,
+  TableName = defaultTable,
+  client = defaultClient
+) {
+  const command = new QueryCommand({
+    TableName,
+    KeyConditionExpression: "pk = :pk AND sk = :sk",
+    ExpressionAttributeValues: {
+      ":pk": { S: pk },
+      ":sk": { S: sk },
+    },
+  });
+
+  return await handleResultQuery(command, client);
+}
+
 export async function query(
   id: string,
   TableName = defaultTable,
@@ -51,21 +113,7 @@ export async function query(
     },
   });
 
-  let item;
-  try {
-    const { Items } = await client.send(command);
-    item = Items?.[0];
-  } catch (e) {
-    // TODO handle error, its not a 404 response
-    logger.warn("Error while fetching: ", { id, error: e });
-    return undefined;
-  }
-
-  if (!item)
-    // Here its a 404 response, the undefined its not clear on this function
-    return undefined;
-
-  return normalize(item);
+  return await handleResultQuery(command, client);
 }
 
 export async function queryBegins(

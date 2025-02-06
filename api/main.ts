@@ -16,7 +16,7 @@ function handleOk(result: any) {
     headers,
   };
 
-  logger.http({ data, init });
+  logger.http(JSON.stringify(data));
 
   return Response.json(data, init);
 }
@@ -30,7 +30,7 @@ function handleErr(result: any) {
     headers,
   };
 
-  logger.http({ data, init });
+  logger.http(JSON.stringify(data));
 
   return Response.json(data, init);
 }

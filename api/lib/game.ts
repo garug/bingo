@@ -1,10 +1,17 @@
-import { insert, query, queryBegins } from "@services/dynamodb.ts";
+import {
+  insert,
+  insertBatch,
+  query,
+  querySk,
+  queryBegins,
+} from "@services/dynamodb.ts";
 import { UUID } from "@lib/uuid.ts";
 import { generateCode } from "@lib/code.ts";
 import { Err, Ok } from "@lib/result.ts";
 
 export type GameOptions = {
   password: string;
+  user: string;
 };
 
 export type GameInstance = {
@@ -19,28 +26,54 @@ export const gameNumbers = Array.from({ length: 99 }).map((_, idx) => idx + 1);
 export async function createGame(options: GameOptions) {
   const id = crypto.randomUUID();
 
+  const { password, user } = options;
+
+  const userGameSk = `#game#${password}`;
+
+  const gameExists = await querySk(user, userGameSk);
+
+  if (gameExists.type === "ok") {
+    // @ts-ignore: data is already checked
+    const gameEnded = await querySk(gameExists.value.id, "#end");
+
+    if (gameEnded.type === "error" && gameEnded.error === "not found") {
+      return Err("already exists and not ended");
+    }
+  }
+
+  const created_at = Date.now();
+
   const game = {
     pk: id,
     sk: "#info",
-    created_at: Date.now(),
+    created_at,
+    password,
     code: generateCode(),
-    password: options.password,
   };
 
-  await insert(game);
+  const info = {
+    pk: user,
+    sk: userGameSk,
+    created_at,
+    id,
+  };
 
-  return { id: game.pk };
+  await insertBatch([game, info]);
+
+  return Ok({ id: game.pk });
 }
 
 export async function fetchGame(id: UUID, usePassword = false) {
-  const game = await query(id);
+  const result = await query(id);
 
-  if (!game) return Err("not_found");
+  if (result.type === "error")
+     return result;
 
-  if (!usePassword)
-      delete game.password;
+  const game = result.value!;
 
-  const gameInstance: GameInstance = {id, ...game.value};
+  if (!usePassword) delete game.password;
+
+  const gameInstance: GameInstance = { id, ...game.value };
 
   return Ok(gameInstance);
 }

@@ -13,11 +13,9 @@ export const actions = {
       body: JSON.stringify({ password }),
     });
 
-    console.log(req);
-
     if (req.status !== 201) {
-      console.log(await req.json())
-      return fail(req.status, { type: "api", error: req.statusText });
+      const error = await req.json();
+      return fail(req.status, { type: "api", error });
     }
 
     const response = await req.json();

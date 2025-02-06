@@ -7,9 +7,8 @@ import { Err, ErrStatus, OkStatus } from "@lib/result.ts";
 export async function POST(req: Request) {
   const user = await authenticate(req);
 
-  console.log(user)
-
-  if (user.type === "error") return ErrStatus(user.error, statusCode(user.error));
+  if (user.type === "error")
+    return ErrStatus(user.error, statusCode(user.error));
 
   let password;
 
@@ -20,15 +19,17 @@ export async function POST(req: Request) {
     return Err("invalid request body");
   }
 
-  console.log(password);
-
   if (!password) {
     return Err("password must be provided");
   }
 
-  const { id } = await createGame({ password });
+  const result = await createGame({ password, user: "some_user" });
 
-  logger.info("Game created: ", { id });
+  if (result.type === "error") {
+    return result;
+  }
 
-  return OkStatus({ id }, 201);
+  logger.info("Game created: ", { id: result.value?.id });
+
+  return OkStatus({ id: result.value?.id }, 201);
 }

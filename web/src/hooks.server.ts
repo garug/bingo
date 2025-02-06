@@ -27,8 +27,6 @@ const handleApi: Handle = async ({ event }) => {
 
   const data = req.body && (await req.json());
 
-  console.log(req)
-
   return Response.json(data, {
     status: req.status,
     statusText: req.statusText,
