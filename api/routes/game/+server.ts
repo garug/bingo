@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     return Err("password must be provided");
   }
 
-  const result = await createGame({ password, user: "some_user" });
+  const result = await createGame({ password, user: user.value! });
 
   if (result.type === "error") {
     return result;

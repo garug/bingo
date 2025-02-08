@@ -16,8 +16,8 @@ export async function authenticate(req: Request) {
   if (!token) return Err("Unauthorized");
 
   try {
-    await verify(token);
-    return Ok();
+    const loginTicket = await verify(token);
+    return Ok(loginTicket.getUserId()!);
   } catch (_error) {
     return Err("Forbbiden");
   }

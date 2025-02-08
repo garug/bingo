@@ -1,8 +1,8 @@
 import {
-  BatchWriteItemCommand,
   DynamoDBClient,
   QueryCommand,
   PutItemCommand,
+  TransactWriteItemsCommand,
 } from "https://esm.sh/@aws-sdk/client-dynamodb@3.696.0?dts";
 import { marshall, unmarshall } from "npm:@aws-sdk/util-dynamodb@3.731.1";
 import { Err, Ok } from "@lib/result.ts";
@@ -38,27 +38,41 @@ export function insert(
   const command = new PutItemCommand({
     TableName,
     Item: marshall(data),
+    ConditionExpression:
+      "attribute_not_exists(pk) AND attribute_not_exists(sk)",
   });
 
   return client.send(command);
 }
 
-export function insertBatch(
+export async function insertBatch(
   data: unknown[],
   TableName = defaultTable,
   client = defaultClient
 ) {
-  const command = new BatchWriteItemCommand({
-    RequestItems: {
-      [TableName]: data.map((item) => ({
-        PutRequest: {
-          Item: marshall(item),
-        },
-      })),
-    },
+  const command = new TransactWriteItemsCommand({
+    TransactItems: data.map((item) => ({
+      Put: {
+        TableName,
+        Item: marshall(item),
+        ConditionExpression:
+          "attribute_not_exists(pk) AND attribute_not_exists(sk)",
+      },
+    })),
   });
 
-  return client.send(command);
+  try {
+    const result = await client.send(command);
+
+    console.log(result);
+    return Ok(result);
+  } catch (e: any) {
+    if (e.name === "TransactionCanceledException") {
+      return Err(e.CancellationReasons.map((reason: any) => reason.Message));
+    }
+
+    return Err(e);
+  }
 }
 
 // TODO: remove any

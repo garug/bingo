@@ -28,46 +28,38 @@ export async function createGame(options: GameOptions) {
 
   const { password, user } = options;
 
-  const userGameSk = `#game#${password}`;
-
-  const gameExists = await querySk(user, userGameSk);
-
-  if (gameExists.type === "ok") {
-    // @ts-ignore: data is already checked
-    const gameEnded = await querySk(gameExists.value.id, "#end");
-
-    if (gameEnded.type === "error" && gameEnded.error === "not found") {
-      return Err("already exists and not ended");
-    }
-  }
-
   const created_at = Date.now();
 
   const game = {
     pk: id,
-    sk: "#info",
+    sk: "#password",
     created_at,
-    password,
-    code: generateCode(),
+    value: password,
   };
 
   const info = {
     pk: user,
-    sk: userGameSk,
+    sk: `#game#${password}`,
     created_at,
-    id,
+    ref: id,
   };
 
-  await insertBatch([game, info]);
+  const code = {
+    pk: "code",
+    sk: `#${generateCode()}`,
+    created_at,
+    game_id: id,
+  };
 
-  return Ok({ id: game.pk });
+  const result = await insertBatch([game, info, code]);
+
+  return result.type === "ok" ? Ok({ id: game.pk }) : result;
 }
 
 export async function fetchGame(id: UUID, usePassword = false) {
   const result = await query(id);
 
-  if (result.type === "error")
-     return result;
+  if (result.type === "error") return result;
 
   const game = result.value!;
 
