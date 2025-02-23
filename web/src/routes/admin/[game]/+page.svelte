@@ -2,6 +2,8 @@
   import AllNumbers from "$lib/components/AllNumbers.svelte";
   import Button from "$lib/components/Button.svelte";
   import { game } from "$lib/stores/game.svelte";
+  import { socket } from "$lib/socket.svelte.js";
+  import { onMount } from "svelte";
 
   const { data } = $props();
 
@@ -22,6 +24,12 @@
       name: "João",
     },
   ];
+
+  onMount(() => {
+    socket.on(data.id, (number) => {
+      numbersSorted = [...numbersSorted, number];
+    });
+  });
 
   async function sortNumber() {
     onSorting = true;

@@ -3,6 +3,7 @@ import { setupRoutes } from "./setup/routes.ts";
 import { RouteModule } from "@lib/routing.ts";
 import { isResult } from "@lib/result.ts";
 import { logger } from "@lib/logger.ts";
+import { io } from "@services/socket/index.ts";
 
 const routes = await setupRoutes();
 
@@ -41,33 +42,35 @@ const headers = {
   // "Content-Encoding": "gzip"
 };
 
-Deno.serve(async (req) => {
-  const url = new URL(req.url);
+Deno.serve(
+  io.handler(async (req) => {
+    const url = new URL(req.url);
 
-  const route = routes.get(url.pathname);
+    const route = routes.get(url.pathname);
 
-  if (!route?.path) return HttpResponses.NOT_FOUND();
+    if (!route?.path) return HttpResponses.NOT_FOUND();
 
-  let module: RouteModule | undefined;
+    let module: RouteModule | undefined;
 
-  try {
-    module = await import(`./${route.path}`);
-  } catch (e) {
-    logger.error("Unexpected error during module import:", e);
-    return HttpResponses.INTERNAL();
-  }
+    try {
+      module = await import(`./${route.path}`);
+    } catch (e) {
+      logger.error("Unexpected error during module import:", e);
+      return HttpResponses.INTERNAL();
+    }
 
-  const result = await module?.[req.method]?.(req, route);
+    const result = await module?.[req.method]?.(req, route);
 
-  if (result && isResult(result)) {
-    return result.type === "ok" ? handleOk(result) : handleErr(result);
-  }
+    if (result && isResult(result)) {
+      return result.type === "ok" ? handleOk(result) : handleErr(result);
+    }
 
-  return (
-    result ??
-    new Response("Method not implemented", {
-      status: 501,
-      headers,
-    })
-  );
-});
+    return (
+      result ??
+      new Response("Method not implemented", {
+        status: 501,
+        headers,
+      })
+    );
+  })
+);
