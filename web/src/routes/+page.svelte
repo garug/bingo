@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { ActionResult } from "@sveltejs/kit";
+  import { toasts } from "svelte-toasts";
+
   import { applyAction, enhance } from "$app/forms";
   import Auth from "$lib/components/Auth.svelte";
   import Button from "$lib/components/Button.svelte";
@@ -22,6 +24,20 @@
 
     return async ({ result }: { result: ActionResult }) => {
       isLoading = false;
+
+      newGameDialog.close();
+
+      if (result.type === "failure") {
+        toasts.add({
+          type: "error",
+          title: "Error on create new game",
+          description:
+            result.data?.error === "game_already_exists"
+              ? "Already exists, use another password"
+              : result.data?.error,
+          duration: 0,
+        });
+      }
       await applyAction(result);
     };
   }

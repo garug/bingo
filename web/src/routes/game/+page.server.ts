@@ -15,7 +15,7 @@ export const actions = {
 
     if (req.status !== 201) {
       const error = await req.json();
-      return fail(req.status, { type: "api", error });
+      return fail(req.status, { type: "api", ...error });
     }
 
     const response = await req.json();

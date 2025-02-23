@@ -1,6 +1,8 @@
 import { generateCode } from "@lib/code.ts";
 import { insert, query } from "@services/dynamodb.ts";
 import { UUID } from "@lib/uuid.ts";
+import { insertBatch } from "@services/dynamodb.ts";
+import { Ok } from "@lib/result.ts";
 
 const min = 1;
 const max = 99;
@@ -51,4 +53,52 @@ export async function fetchCard(id: UUID) {
   const card = await query(`card#${id}`);
 
   return card;
+}
+
+export async function bindCard(user: string, card: string, game: string) {
+  const created_at = Date.now();
+
+  const bindCard = {
+    pk: user,
+    sk: `card#${game}`,
+    code: card,
+    created_at,
+  };
+
+  const result = await insert(bindCard);
+
+  if (result.type === "error") {
+    return result;
+  }
+
+  return Ok();
+}
+
+export async function generateCard(user: string, game: string) {
+  const created_at = Date.now();
+
+  const code = generateCode(5);
+
+  const card = {
+    numbers: generateNumbers(),
+    created_at,
+  };
+
+  const bindCard = {
+    pk: user,
+    sk: `card#${game}`,
+    code,
+    created_at,
+  };
+
+  const result = await insertBatch([
+    { pk: "card", sk: code, ...card },
+    bindCard,
+  ]);
+
+  if (result.type === "error") {
+    return result;
+  }
+
+  return Ok({ code, ...card });
 }

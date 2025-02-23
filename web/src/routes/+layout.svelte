@@ -1,5 +1,6 @@
 <script lang="ts">
   import { credential } from "$lib/stores/auth.svelte";
+  import Toast from "$lib/components/Toast.svelte";
   import "../app.css";
 
   let { children, data } = $props();
@@ -12,4 +13,6 @@
      <Header />
   {/if} -->
   {@render children()}
+
+  <Toast />
 </main>

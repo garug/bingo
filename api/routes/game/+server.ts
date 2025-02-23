@@ -1,6 +1,6 @@
 import { authenticate } from "@lib/auth.ts";
 import { statusCode } from "@lib/statusCode.ts";
-import { createGame } from "@lib/game.ts";
+import { createGame, fetchUserGames } from "@lib/game.ts";
 import { logger } from "@lib/logger.ts";
 import { Err, ErrStatus, OkStatus } from "@lib/result.ts";
 
@@ -32,4 +32,13 @@ export async function POST(req: Request) {
   logger.info("Game created: ", { id: result.value?.id });
 
   return OkStatus({ id: result.value?.id }, 201);
+}
+
+export async function GET(req: Request) {
+  const user = await authenticate(req);
+
+  if (user.type === "error")
+    return ErrStatus(user.error, statusCode(user.error));
+
+  return fetchUserGames(user.value!);
 }

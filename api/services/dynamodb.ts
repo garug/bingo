@@ -1,6 +1,7 @@
 import {
   DynamoDBClient,
   QueryCommand,
+  QueryCommandInput,
   PutItemCommand,
   TransactWriteItemsCommand,
 } from "https://esm.sh/@aws-sdk/client-dynamodb@3.696.0?dts";
@@ -42,7 +43,7 @@ export function insert(
       "attribute_not_exists(pk) AND attribute_not_exists(sk)",
   });
 
-  return client.send(command);
+  return Ok(client.send(command));
 }
 
 export async function insertBatch(
@@ -112,6 +113,24 @@ export async function querySk(
   });
 
   return await handleResultQuery(command, client);
+}
+
+export async function queryCustom(
+  prevCommand: Omit<QueryCommandInput, "TableName">
+) {
+  const command = new QueryCommand({ ...prevCommand, TableName: defaultTable });
+
+  const result = await defaultClient.send(command);
+
+  return Ok(result.Items?.map((item) => normalize(item)));
+}
+
+type SendParameters = Parameters<typeof defaultClient.send>;
+
+export async function send(command: Omit<SendParameters[0], "TableName">) {
+  const commandWithTable = { ...command, TableName: defaultTable };
+
+  return defaultClient.send(commandWithTable);
 }
 
 export async function query(

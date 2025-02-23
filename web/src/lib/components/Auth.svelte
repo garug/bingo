@@ -19,7 +19,7 @@
       body: JSON.stringify({
         name: "credential",
         value: credential,
-        maxAge: 60 * 60 * 8,
+        maxAge: 60 * 60 * 1,
       }),
     });
   }

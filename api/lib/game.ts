@@ -2,8 +2,8 @@ import {
   insert,
   insertBatch,
   query,
-  querySk,
   queryBegins,
+  queryCustom,
 } from "@services/dynamodb.ts";
 import { UUID } from "@lib/uuid.ts";
 import { generateCode } from "@lib/code.ts";
@@ -30,11 +30,15 @@ export async function createGame(options: GameOptions) {
 
   const created_at = Date.now();
 
+  const game_code = generateCode();
+
   const game = {
     pk: id,
-    sk: "#password",
+    sk: "#game",
     created_at,
     value: password,
+    game_code,
+    user,
   };
 
   const info = {
@@ -46,14 +50,24 @@ export async function createGame(options: GameOptions) {
 
   const code = {
     pk: "code",
-    sk: `#${generateCode()}`,
+    sk: `#${game_code}`,
     created_at,
-    game_id: id,
+    ref: id,
   };
 
   const result = await insertBatch([game, info, code]);
 
-  return result.type === "ok" ? Ok({ id: game.pk }) : result;
+  if (result.type === "ok") {
+    return Ok({ id: game.pk });
+  } else {
+    const alreadyHasInfo = result.error[1];
+
+    if (alreadyHasInfo) {
+      return Err("game_already_exists");
+    }
+
+    return result;
+  }
 }
 
 export async function fetchGame(id: UUID, usePassword = false) {
@@ -78,13 +92,21 @@ export async function getNumbers(id: UUID) {
   return Ok(numbers.value?.map((e) => Number(e.value)));
 }
 
-export async function insertGameNumber(id: UUID, number: number) {
-  await insert({
+export function insertGameNumber(id: UUID, number: number) {
+  return insert({
     pk: id,
     sk: `#number#${number}`,
     value: number,
     created_at: Date.now(),
   });
+}
 
-  return Ok();
+export async function fetchUserGames(user: string) {
+  return await queryCustom({
+    KeyConditionExpression: "pk = :pk AND begins_with(sk, :sk)",
+    ExpressionAttributeValues: {
+      ":pk": { S: user },
+      ":sk": { S: "#game" },
+    },
+  });
 }
