@@ -9,3 +9,5 @@ socket.on("connect_event", function (data) {
 socket.on("disconnect_event", function (data) {
   console.log("disconnected");
 });
+
+socket.onAny((s) => "message: " + s);
