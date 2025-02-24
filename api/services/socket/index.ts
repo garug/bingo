@@ -9,7 +9,13 @@ export const io = new Server({
 });
 
 io.on("connection", (socket) => {
+  logger.info(`socket ${socket.id} connected`);
+
   socket.on("disconnect", (reason) => {
-    logger.error(`socket ${socket.id} disconnected due to ${reason}`);
+    logger.info(`socket ${socket.id} disconnected due to ${reason}`);
+  });
+
+  socket.on("connect_error", (err) => {
+    logger.error(`connect_error due to ${err.message}`);
   });
 });

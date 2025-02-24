@@ -26,23 +26,19 @@
   ];
 
   onMount(() => {
+    console.log(socket);
     socket.on(data.id, (number) => {
       numbersSorted = [...numbersSorted, number];
+      onSorting = false;
     });
   });
 
   async function sortNumber() {
     onSorting = true;
 
-    const res = await fetch(`/api/game/${data.id}/numbers`, {
+    fetch(`/api/game/${data.id}/numbers`, {
       method: "POST",
     });
-
-    const number = await res.json();
-
-    numbersSorted = [...numbersSorted, number];
-
-    onSorting = false;
   }
 </script>
 
