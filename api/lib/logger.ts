@@ -1,9 +1,12 @@
-import winston from 'npm:winston';
+import wiston from "npm:winston";
 
-export const logger = winston.createLogger({
-    level: "http",
-    format: Deno.env.get("DENO_ENV") === "production" ? winston.format.json() : winston.format.simple(),
-    transports: [
-        new winston.transports.Console(),
-    ]
+const format =
+  Deno.env.get("DENO_ENV") === "production"
+    ? wiston.format.json()
+    : wiston.format.combine(wiston.format.colorize(), wiston.format.simple());
+
+export const logger = wiston.createLogger({
+  level: "http",
+  format,
+  transports: [new wiston.transports.Console()],
 });

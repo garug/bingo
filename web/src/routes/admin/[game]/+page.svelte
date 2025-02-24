@@ -26,11 +26,11 @@
   ];
 
   onMount(() => {
-    console.log(socket);
     socket.on(data.id, (number) => {
       numbersSorted = [...numbersSorted, number];
       onSorting = false;
     });
+    setInterval(() => console.log(socket), 1000);
   });
 
   async function sortNumber() {

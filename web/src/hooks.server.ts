@@ -35,6 +35,7 @@ const handleApi: Handle = async ({ event }) => {
 
 export const handle: Handle = async (params) => {
   const { event, resolve } = params;
+
   if (event.url.pathname.startsWith("/api")) {
     return handleApi(params);
   }
