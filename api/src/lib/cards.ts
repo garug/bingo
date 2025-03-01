@@ -1,8 +1,8 @@
 import { generateCode } from "@lib/code.ts";
-import { insert, query } from "@services/dynamodb.ts";
 import { UUID } from "@lib/uuid.ts";
-import { insertBatch } from "@services/dynamodb.ts";
 import { Ok } from "@lib/result.ts";
+
+import { insert, query, insertBatch } from "@services/database/index.ts";
 
 const min = 1;
 const max = 99;
@@ -46,7 +46,7 @@ export async function generateCards(amount = 1) {
   // another idea is use another pattern like repository to handle with card entity
   await Promise.all(dbCards.map((c) => insert(c)));
 
-  return cards;
+  return Ok(cards);
 }
 
 export async function fetchCard(id: UUID) {

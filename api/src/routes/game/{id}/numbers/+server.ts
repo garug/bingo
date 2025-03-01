@@ -2,7 +2,7 @@ import { Route, usePathParameters } from "@lib/routing.ts";
 import { gameNumbers, getNumbers, insertGameNumber } from "@lib/game.ts";
 import { Err, Ok } from "@lib/result.ts";
 import { isValidUUID, UUID } from "@lib/uuid.ts";
-import { io } from "@services/socket/index.ts";
+import { socket } from "../../../../services/socket/mod.ts";
 
 export async function POST(req: Request, route: Route) {
   const { id } = usePathParameters(req, route);
@@ -32,7 +32,7 @@ export async function POST(req: Request, route: Route) {
 
   await insertGameNumber(gameId, sortedNumber);
 
-  io.emit(gameId, sortedNumber);
+  socket.emit(gameId, sortedNumber);
 
   return Ok(sortedNumber);
 }

@@ -4,7 +4,7 @@ import {
   query,
   queryBegins,
   queryCustom,
-} from "@services/dynamodb.ts";
+} from "@services/database/mod.ts";
 import { UUID } from "@lib/uuid.ts";
 import { generateCode } from "@lib/code.ts";
 import { Err, Ok } from "@lib/result.ts";

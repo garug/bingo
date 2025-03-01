@@ -30,7 +30,6 @@
       numbersSorted = [...numbersSorted, number];
       onSorting = false;
     });
-    setInterval(() => console.log(socket), 1000);
   });
 
   async function sortNumber() {

@@ -4,8 +4,8 @@
     "dev": "deno run --allow-net --allow-read --allow-env --allow-sys --watch --env-file main.ts"
   },
   "imports": {
-    "@lib/": "./lib/",
-    "@services/": "./services/",
+    "@lib/": "./src/lib/",
+    "@services/": "./src/services/",
     "@std/assert": "jsr:@std/assert@1",
     "@std/fs": "jsr:@std/fs@^1.0.4",
     "@std/path": "jsr:@std/path@^1.0.8"

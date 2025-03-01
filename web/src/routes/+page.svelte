@@ -110,7 +110,7 @@
         </button>
       </div>
       <div class="flex gap-2 justify-center text-xs font-medium text-gray-300">
-        <a href="admin/oi">Administrar</a>
+        <a href="admin">Administrar</a>
         •
         <a href="present/oi">Apresentar</a>
       </div>

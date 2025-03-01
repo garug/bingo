@@ -44,7 +44,7 @@ function dirEntryToRoute(dirEntry: WalkEntry, rootLevel: number): Route {
   };
 }
 
-export async function setupRoutes(path = [".", "routes"]) {
+export async function setupRoutes(path = [".", "src", "routes"]) {
   const iterateOverRoutes = walk(join(...path), {
     match: [serverRegExp],
   });

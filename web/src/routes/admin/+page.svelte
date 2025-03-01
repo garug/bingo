@@ -11,7 +11,7 @@
     {#each data.games as game}
       <tr>
         <td>{game.ref}</td>
-        <td><Button>go to game</Button></td>
+        <td><a href={`admin/${game.ref}`}>go to game</a></td>
       </tr>
     {/each}
   </tbody>

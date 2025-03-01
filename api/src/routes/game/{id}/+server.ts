@@ -29,7 +29,7 @@ export async function GET(req: Request, route: Route) {
     // @ts-ignore: numbers and game are guaranteed to be ResultOk
     const returned = { numbers: numbers.value, game: game.value };
 
-    logger.verbose("Game fetched: ", { id });
+    logger.verbose("game fetched", { id });
 
     return Ok(returned);
   } else {

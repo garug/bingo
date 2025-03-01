@@ -1,5 +1,6 @@
 import type { UUID } from "@lib/uuid.ts";
-import { insert } from "@services/dynamodb.ts";
+import { insert } from "@services/database/mod.ts";
+import { Ok } from "@lib/result.ts";
 
 export async function bindCardGame(user: string, card: UUID, game: UUID) {
   // TODO validate card and game exists before assign
@@ -12,9 +13,9 @@ export async function bindCardGame(user: string, card: UUID, game: UUID) {
   //   created_at,
   // });
 
-  return {
+  return Ok({
     card,
     game,
     created_at,
-  };
+  });
 }

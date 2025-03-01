@@ -1,3 +1,5 @@
+import { Ok } from "@lib/result.ts";
+
 export function GET() {
-  return new Response("Hello World");
+  return Ok("Hello World");
 }
