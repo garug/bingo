@@ -7,7 +7,7 @@
 
   const { data } = $props();
 
-  let numbersSorted = $state(data.game.numbers);
+  let numbersSorted = $state(data.numbers);
 
   let onSorting = $state(false);
 
@@ -63,6 +63,7 @@
     class=" h-[-20px] cursor-pointer w-[200px] bg-pink text-white rounded-full
     font-semibold p-4 hover:text-neongreen">Ler Ficha</button
   > -->
+  <p>Code: {data.game.game_code}</p>
   <Button onclick={sortNumber} variant="green" disabled={onSorting}>
     {#if onSorting}
       Sorteando...

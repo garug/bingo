@@ -13,8 +13,6 @@
   let newGameDialog: ReturnType<typeof Dialog>;
   let enterDialog: ReturnType<typeof Dialog>;
 
-  let createForm: HTMLFormElement;
-
   let { form } = $props();
 
   let isLoading = $state(false);
@@ -41,22 +39,41 @@
       await applyAction(result);
     };
   }
+
+  async function handleJoin() {
+    isLoading = true;
+
+    return async ({ result }: { result: ActionResult }) => {
+      isLoading = false;
+
+      enterDialog.close();
+
+      if (result.type === "failure") {
+        toasts.add({
+          type: "error",
+          title: "Error joining game",
+          description: result.data?.error || "Unkwon error",
+          duration: 0,
+        });
+      }
+      await applyAction(result);
+    };
+  }
 </script>
 
 <Dialog bind:this={newGameDialog}>
   <form
     inert={isLoading}
-    bind:this={createForm}
     method="POST"
     action="/game"
     use:enhance={handleAction}
   >
     <div class="p-4">
       <label class="block mb-2 text-sm text-slate-600">
-        Senha da Sala
+        Nomeie sua sala
         <input
           name="password"
-          type="password"
+          type="text"
           required
           class="w-full text-sm border bordr-slate-200 rounded-md px-3 py-2 shadow-sm focus:outline-none"
         />
@@ -64,17 +81,19 @@
           <span
             class="flex items-center font-medium text-red-500 text-xs mt-1 ml-1"
           >
-            Senha é obrigatória
+            Nome é obrigatório
           </span>
         {/if}
       </label>
       <p>
-        A senha é utilizada para acessar as funções como sortear novo número e
-        cadastrar fichas impressas na mesa.
+        Escolha um nome que faça sentido para você, algo como "natal família" ou
+        "bingo do trabalho"
       </p>
+      <p>Esse nome não será utilizado para identificação por outras pessoas</p>
+      <p>Você não conseguirá criar outra sala com o mesmo nome.</p>
     </div>
     <div class="bg-gray-50 px-4 py-2 text-right">
-      <Button>{isLoading ? "Loading..." : "Iniciar"}</Button>
+      <Button>{isLoading ? "Carregando..." : "Iniciar"}</Button>
       <Button variant="secondary" onclick={() => newGameDialog.close()}>
         Cancelar
       </Button>
@@ -83,7 +102,31 @@
 </Dialog>
 
 <Dialog bind:this={enterDialog}>
-  <h1>Olá entrar</h1>
+  <form
+    inert={isLoading}
+    method="POST"
+    action="game/join"
+    use:enhance={handleJoin}
+  >
+    <div class="p-4">
+      <label class="block mb-2 text-sm text-slate-600">
+        Código da Sala
+        <input
+          name="code"
+          type="text"
+          required
+          class="w-full text-sm border bordr-slate-200 rounded-md px-3 py-2 shadow-sm focus:outline-none"
+        />
+      </label>
+      <p>Peça ao seu anfitrião o código para poder se juntar ao sorteio</p>
+    </div>
+    <div class="bg-gray-50 px-4 py-2 text-right">
+      <Button>{isLoading ? "Carregando..." : "Entrar"}</Button>
+      <Button variant="secondary" onclick={() => enterDialog.close()}>
+        Cancelar
+      </Button>
+    </div>
+  </form>
 </Dialog>
 
 <div

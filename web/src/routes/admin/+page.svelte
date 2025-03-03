@@ -4,7 +4,7 @@
   const { data } = $props();
 </script>
 
-<h1>Your games:</h1>
+<h1>Seus jogos:</h1>
 
 <table>
   <tbody>
@@ -16,3 +16,5 @@
     {/each}
   </tbody>
 </table>
+
+<a href="/">Home</a>

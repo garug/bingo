@@ -7,6 +7,6 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
   return {
     id: params.game,
-    game
+    ...game
   };
 };
