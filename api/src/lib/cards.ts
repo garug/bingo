@@ -1,8 +1,7 @@
 import { generateCode } from "@lib/code.ts";
 import { UUID } from "@lib/uuid.ts";
-import { Ok } from "@lib/result.ts";
-
-import { insert, query, insertBatch } from "@services/database/index.ts";
+import { Ok } from "@lib/result.ts"
+import { insert, query, insertBatch } from "@services/database/mod.ts";
 
 const min = 1;
 const max = 99;
@@ -26,25 +25,24 @@ function generateNumbers() {
   return arrNumbers;
 }
 
-function uniqueCard() {
+export function uniqueCard(created_at = Date.now()) {
   return {
-    id: generateCode(5),
+    pk: "card",
+    sk: generateCode(5),
     numbers: generateNumbers(),
-    created_at: Date.now(),
+    created_at,
   };
 }
 
 export type Card = ReturnType<typeof uniqueCard>;
 
 export async function generateCards(amount = 1) {
-  const cards = Array.from({ length: amount }).map(uniqueCard);
-
-  const dbCards = cards.map((e) => ({ ...e, id: `card#${e.id}` }));
+  const cards = Array.from({ length: amount }).map(() => uniqueCard());
 
   // TODO a improve here is use generator and insert all cards
   // TODO another improve is insert data using batch operations on dynamo
   // another idea is use another pattern like repository to handle with card entity
-  await Promise.all(dbCards.map((c) => insert(c)));
+  await Promise.all(cards.map((c) => insert(c)));
 
   return Ok(cards);
 }

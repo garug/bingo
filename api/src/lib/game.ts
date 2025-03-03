@@ -2,12 +2,15 @@ import {
   insert,
   insertBatch,
   query,
+  querySk,
   queryBegins,
   queryCustom,
 } from "@services/database/mod.ts";
 import { UUID } from "@lib/uuid.ts";
 import { generateCode } from "@lib/code.ts";
 import { Err, Ok } from "@lib/result.ts";
+import { logger } from "@lib/logger.ts";
+import { uniqueCard } from "@lib/cards.ts";
 
 export type GameOptions = {
   password: string;
@@ -77,9 +80,9 @@ export async function fetchGame(id: UUID, usePassword = false) {
 
   const game = result.value!;
 
-  if (!usePassword) delete game.password;
+  if (!usePassword) delete game.value;
 
-  const gameInstance: GameInstance = { id, ...game.value };
+  const gameInstance = { id, ...game } as GameInstance;
 
   return Ok(gameInstance);
 }
@@ -108,5 +111,31 @@ export async function fetchUserGames(user: string) {
       ":pk": { S: user },
       ":sk": { S: "#game" },
     },
+  });
+}
+
+export async function addToGame(user: string, code: string) {
+  const game = await querySk("code", `#${code}`);
+
+  if (game.type === "error") return game;
+
+  const created_at = Date.now();
+
+  const card = uniqueCard(created_at);
+
+  const session = {
+    pk: user,
+    sk: `#session#${game.value!.ref}`,
+    ref: card.sk,
+    created_at,
+  };
+
+  const result = await insertBatch([session, card]);
+
+  if (result.type === "error") return result;
+
+  return Ok({
+    id: game.value!.ref,
+    card: { id: card.sk, numbers: card.numbers },
   });
 }
