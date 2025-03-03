@@ -33,6 +33,8 @@ Deno.serve(
     try {
       const result = await handler(req, route);
 
+      logger.verbose("handler_result", result);
+
       return isResult(result)
         ? handleResponse(result)
         : createResponse("invalid response", 500);
