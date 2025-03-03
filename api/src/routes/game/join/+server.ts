@@ -1,5 +1,5 @@
 import { authenticate } from "@lib/auth.ts";
-import { Err, ErrStatus, Ok, OkStatus } from "@lib/result.ts";
+import { Err, ErrStatus, OkStatus } from "@lib/result.ts";
 import { statusCode } from "@lib/statusCode.ts";
 import { addToGame } from "@lib/game.ts";
 import { logger } from "@lib/logger.ts";

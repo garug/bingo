@@ -9,7 +9,6 @@ import {
 import { UUID } from "@lib/uuid.ts";
 import { generateCode } from "@lib/code.ts";
 import { Err, Ok } from "@lib/result.ts";
-import { logger } from "@lib/logger.ts";
 import { uniqueCard } from "@lib/cards.ts";
 
 export type GameOptions = {
