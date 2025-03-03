@@ -1,4 +1,3 @@
-import { logger } from "@lib/logger.ts";
 import { Result } from "@lib/result.ts";
 
 type Status = {
@@ -16,9 +15,9 @@ export function handleResponse<T, E>(result: Result<T, E> & Status) {
 
   const status = result.status || (result.type === "ok" ? 200 : 400);
 
-  logger.http({ ...data });
-
-  return Response.json(data, { status, headers });
+  return data
+    ? Response.json(data, { status, headers })
+    : new Response(null, { status, headers });
 }
 
 export function createResponse(message: string, status: number) {
