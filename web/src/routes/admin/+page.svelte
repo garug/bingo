@@ -17,4 +17,4 @@
   </tbody>
 </table>
 
-<a href="/">Home</a>
+<a href="/">Início</a>

@@ -1,5 +1,5 @@
 import { authenticate } from "@lib/auth.ts";
-import { Err, ErrStatus, OkStatus } from "@lib/result.ts";
+import { Err, ErrStatus, Ok, OkStatus } from "@lib/result.ts";
 import { statusCode } from "@lib/statusCode.ts";
 import { addToGame } from "@lib/game.ts";
 import { logger } from "@lib/logger.ts";
@@ -25,7 +25,15 @@ export async function POST(req: Request) {
 
   const resultJoin = await addToGame(user.value!, code);
 
-  if (resultJoin.type === "error") return resultJoin;
+  logger.verbose("resultJoin", resultJoin);
+
+  if (resultJoin.type === "error") {
+    if (resultJoin.error.message === "session already exists") {
+      return Ok(resultJoin.error.session);
+    }
+
+    return resultJoin;
+  };
 
   logger.info("joined game", resultJoin.value);
 

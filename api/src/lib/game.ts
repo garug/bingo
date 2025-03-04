@@ -131,10 +131,17 @@ export async function addToGame(user: string, code: string) {
 
   const result = await insertBatch([session, card]);
 
-  if (result.type === "error") return result;
-
-  return Ok({
+  const returned = {
     id: game.value!.ref,
     card: { id: card.sk, numbers: card.numbers },
-  });
+  };
+
+  if (result.type === "error") {
+    if (result.error[0] === "The conditional request failed") {
+      return Err({ message: "session already exists", session: returned });
+    }
+    return result;
+  }
+
+  return Ok(returned);
 }

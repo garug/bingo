@@ -1,4 +1,7 @@
 import {
+  BatchGetItemCommand,
+  BatchGetItemCommandInput,
+  GetItemCommand,
   DynamoDBClient,
   QueryCommand,
   QueryCommandInput,
@@ -29,6 +32,19 @@ function normalize(entry: any) {
   delete entry.pk;
 
   return unmarshall(entry);
+}
+
+export async function getItem(key: any, TableName = defaultTable, client = defaultClient) {
+  const command = new GetItemCommand({
+    TableName,
+    Key: marshall(key),
+  })
+
+  const result = await client.send(command);
+
+  if (!result.Item) return Err("not found");
+
+  return Ok(normalize(result.Item));
 }
 
 export function insert(
@@ -95,6 +111,24 @@ async function handleResultQuery(
   if (!item) return Err("not found");
 
   return Ok(normalize(item));
+}
+
+export async function queryBatch(
+  keys: BatchGetItemCommandInput["RequestItems"][],
+  TableName = defaultTable,
+  client = defaultClient
+) {
+  const command = new BatchGetItemCommand({
+    RequestItems: {
+      [TableName]: {
+        Keys: keys.map((key) => marshall(key)),
+      },
+    },
+  });
+
+  const result = await client.send(command);
+
+  return result.Responses?.[TableName].map((e) => marshall(e)) || [];
 }
 
 export async function querySk(

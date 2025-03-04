@@ -1,6 +1,8 @@
 import type { Actions } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
 
+const successCodes = [200, 201]
+
 export const actions = {
   default: async ({ fetch, request }) => {
     const data = await request.formData();
@@ -13,7 +15,7 @@ export const actions = {
       body: JSON.stringify({ code }),
     });
 
-    if (req.status !== 201) {
+    if (!successCodes.includes(req.status)) {
       const error = await req.json();
       return fail(req.status, { type: "api", ...error });
     }
