@@ -2,13 +2,21 @@
   let {
     children,
     onclick = undefined,
+    preventDefault = false,
     variant = "primary",
     ...rest
   } = $props();
 </script>
 
 <button
-  {onclick}
+  onclick={(event) => {
+    console.log("doing");
+    if (preventDefault) {
+      console.log("preventing");
+      event.preventDefault();
+    }
+    onclick?.(event);
+  }}
   {...rest}
   class={[
     variant,

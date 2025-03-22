@@ -28,10 +28,10 @@
       if (result.type === "failure") {
         toasts.add({
           type: "error",
-          title: "Error on create new game",
+          title: "Erro ao criar jogo",
           description:
             result.data?.error === "game_already_exists"
-              ? "Already exists, use another password"
+              ? "Nome já utilizado, escolha outro"
               : result.data?.error,
           duration: 0,
         });
@@ -94,7 +94,11 @@
     </div>
     <div class="bg-gray-50 px-4 py-2 text-right">
       <Button>{isLoading ? "Carregando..." : "Iniciar"}</Button>
-      <Button variant="secondary" onclick={() => newGameDialog.close()}>
+      <Button
+        preventDefault
+        variant="secondary"
+        onclick={() => newGameDialog.close()}
+      >
         Cancelar
       </Button>
     </div>
@@ -122,7 +126,11 @@
     </div>
     <div class="bg-gray-50 px-4 py-2 text-right">
       <Button>{isLoading ? "Carregando..." : "Entrar"}</Button>
-      <Button variant="secondary" onclick={() => enterDialog.close()}>
+      <Button
+        preventDefault
+        variant="secondary"
+        onclick={() => enterDialog.close()}
+      >
         Cancelar
       </Button>
     </div>

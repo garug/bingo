@@ -5,10 +5,15 @@
   };
 
   let { value, active }: Props = $props();
+
+  const isZero = value === 0;
+
+  // avoiding unnecessary re-renders
+  const showNumber = isZero ? "⭐" : value;
 </script>
 
-<div class="number" class:active>
-  {value}
+<div class={["number", { active: active || isZero }]}>
+  {showNumber}
 </div>
 
 <style lang="postcss">
