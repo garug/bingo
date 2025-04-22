@@ -10,20 +10,20 @@ export async function POST(req: Request) {
   if (user.type === "error")
     return ErrStatus(user.error, statusCode(user.error));
 
-  let password;
+  let code;
 
   try {
     const body = await req.json();
-    password = body.password;
+    code = body.code;
   } catch (_e) {
     return Err("invalid request body");
   }
 
-  if (!password) {
-    return Err("password must be provided");
+  if (!code) {
+    return Err("code must be provided");
   }
 
-  const result = await createGame({ password, user: user.value! });
+  const result = await createGame({ password: code, user: user.value! });
 
   if (result.type === "error") {
     return result;

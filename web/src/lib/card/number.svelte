@@ -17,11 +17,13 @@
 </div>
 
 <style lang="postcss">
+  @reference "../../app.css";
+
   .number {
-    @apply w-[60px] h-[60px] flex justify-center items-center rounded-xl text-pink-500 font-semibold;
+    @apply w-[60px] h-[60px] flex justify-center items-center rounded-container font-semibold text-secondary-300;
   }
 
   .number.active {
-    @apply bg-pink-700 text-white;
+    @apply text-secondary-500 bg-surface-900;
   }
 </style>

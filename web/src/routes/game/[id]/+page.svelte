@@ -18,11 +18,15 @@
   });
 </script>
 
-<h1>Seu cartão: {cardNumber}</h1>
-<div class="grid p-2 grid-cols-5 gap-2 w-fit">
-  {#each card as number}
-    <Number value={number} active={numbersSorted.includes(number)} />
-  {/each}
-</div>
+<div
+  class="grid gap-4 place-content-center w-screen h-screen justify-items-center"
+>
+  <h1>Seu cartão: {cardNumber}</h1>
+  <div class="grid p-2 grid-cols-5 gap-2 w-fit">
+    {#each card as number}
+      <Number value={number} active={numbersSorted.includes(number)} />
+    {/each}
+  </div>
 
-<a href="/">Início</a>
+  <a href="/">Início</a>
+</div>

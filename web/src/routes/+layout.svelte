@@ -1,18 +1,21 @@
 <script lang="ts">
-  import { credential } from "$lib/stores/auth.svelte";
-  import Toast from "$lib/components/Toast.svelte";
-  import "../app.css";
+    import "../app.css";
 
-  let { children, data } = $props();
+    import { afterNavigate, beforeNavigate } from "$app/navigation";
 
-  if (data.credential) credential.set(data.credential);
+    import { credential } from "$lib/stores/auth.svelte";
+    import Loading from "$lib/components/Loading.svelte";
+    import { isLoading } from "$lib/stores/loading.svelte";
+
+    let { children, data } = $props();
+
+    if (data.credential) credential.set(data.credential);
+
+    beforeNavigate(() => isLoading.set(true));
+    afterNavigate(() => isLoading.set(false));
 </script>
 
 <main class="app">
-  <!-- {#if $page.url.pathname !== "/game"}
-     <Header />
-  {/if} -->
-  {@render children()}
-
-  <Toast />
+    <Loading />
+    {@render children()}
 </main>

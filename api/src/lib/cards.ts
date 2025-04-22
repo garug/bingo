@@ -2,6 +2,7 @@ import { generateCode } from "@lib/code.ts";
 import { UUID } from "@lib/uuid.ts";
 import { Ok } from "@lib/result.ts"
 import { insert, query, insertBatch } from "@services/database/mod.ts";
+import { logger } from "@lib/logger.ts";
 
 const min = 1;
 const max = 99;
@@ -10,8 +11,8 @@ const totalNumbers = 25;
 function generateNumbers() {
   const numbers = new Set();
 
-  while (numbers.size < totalNumbers) {
-    const number = Math.floor(Math.random() * (max + 1)) + min;
+  while (numbers.size < totalNumbers - 1) {
+    const number = Math.floor(Math.random() * max) + min;
     if (!numbers.has(number)) {
       numbers.add(number);
     }
@@ -97,6 +98,8 @@ export async function generateCard(user: string, game: string) {
   if (result.type === "error") {
     return result;
   }
+
+  logger.verbose("generated_card", { card, user })
 
   return Ok({ code, ...card });
 }

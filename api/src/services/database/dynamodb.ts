@@ -81,7 +81,6 @@ export async function insertBatch(
   try {
     const result = await client.send(command);
 
-    console.log(result);
     return Ok(result);
   } catch (e: any) {
     if (e.name === "TransactionCanceledException") {

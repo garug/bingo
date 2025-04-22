@@ -8,7 +8,7 @@ import {
 } from "@services/database/mod.ts";
 import { UUID } from "@lib/uuid.ts";
 import { generateCode } from "@lib/code.ts";
-import { Err, Ok } from "@lib/result.ts";
+import { Err, Ok, ResultOk } from "@lib/result.ts";
 import { uniqueCard } from "@lib/cards.ts";
 
 export type GameOptions = {
@@ -91,7 +91,7 @@ export async function getNumbers(id: UUID) {
 
   if (numbers.type === "error") return numbers;
 
-  return Ok(numbers.value?.map((e) => Number(e.value)));
+  return Ok(numbers.value?.map((e: ResultOk<number>) => Number(e.value)));
 }
 
 export function insertGameNumber(id: UUID, number: number) {

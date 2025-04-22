@@ -1,7 +1,6 @@
 <script lang="ts">
   import AllNumbers from "$lib/components/AllNumbers.svelte";
   import Button from "$lib/components/Button.svelte";
-  import { game } from "$lib/stores/game.svelte";
   import { socket } from "$lib/socket.svelte.js";
   import { onMount } from "svelte";
 
@@ -26,7 +25,7 @@
   ];
 
   onMount(() => {
-    socket.on(data.id, (number) => {
+    socket.on(data.id, (number: number) => {
       numbersSorted = [...numbersSorted, number];
       onSorting = false;
     });
@@ -64,7 +63,7 @@
     font-semibold p-4 hover:text-neongreen">Ler Ficha</button
   > -->
   <p>Code: {data.game.game_code}</p>
-  <Button onclick={sortNumber} variant="green" disabled={onSorting}>
+  <Button onclick={sortNumber} variant="secondary" disabled={onSorting}>
     {#if onSorting}
       Sorteando...
     {:else}
