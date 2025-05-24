@@ -63,11 +63,12 @@
     font-semibold p-4 hover:text-neongreen">Ler Ficha</button
   > -->
   <p>Code: {data.game.game_code}</p>
-  <Button onclick={sortNumber} variant="secondary" disabled={onSorting}>
+  <Button onclick={sortNumber} disabled={onSorting}>
     {#if onSorting}
       Sorteando...
     {:else}
       Sortear Número
     {/if}
   </Button>
+  <a href="/">Início</a>
 </div>
